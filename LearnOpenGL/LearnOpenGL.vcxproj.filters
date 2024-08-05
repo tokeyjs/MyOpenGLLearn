@@ -49,6 +49,9 @@
     <None Include="shader.vs">
       <Filter>shaderCode</Filter>
     </None>
+    <None Include="lightShader.fs">
+      <Filter>shaderCode</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="wall.jpg">
