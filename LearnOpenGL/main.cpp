@@ -94,6 +94,7 @@ int main()
 
 #pragma endregion
 
+
 #pragma region 载入图形数据生成缓冲对象
 
 
@@ -230,15 +231,39 @@ int main()
         lightModel = glm::translate(lightModel, lightPos);
         lightModel = glm::scale(lightModel, glm::vec3(0.2f));
 
-        // 绘制物体
+
+
+        // 光源
+        glm::vec3 lightColor;
+        //lightColor.x = sin(glfwGetTime() * 2.0f);
+        //lightColor.y = sin(glfwGetTime() * 0.7f);
+        //lightColor.z = sin(glfwGetTime() * 1.3f);
+        lightColor.x = 1.0f;
+        lightColor.y = 1.0f;
+        lightColor.z = 1.0f;
         objShader.use();
+        //glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);
+        //glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f);
+        glm::vec3 diffuseColor = lightColor * glm::vec3(1.0f);
+        glm::vec3 ambientColor = diffuseColor * glm::vec3(1.0f);
+        glm::vec3 specularColor = glm::vec3(1.0f);
+        objShader.setVec3("light.ambient", ambientColor.x, ambientColor.y, ambientColor.z); //光源的 环境光照
+        objShader.setVec3("light.diffuse", diffuseColor.x, diffuseColor.y, diffuseColor.z);  //光源的 漫反射
+        objShader.setVec3("light.specular", specularColor.x, specularColor.y, specularColor.z);  //光源的 镜面反射
+        objShader.setVec3("light.position", lightPos.x, lightPos.y, lightPos.z);
+
         objShader.setMat4("model", glm::value_ptr(objModel));
         objShader.setMat4("view", glm::value_ptr(cam.GetViewMatrix()));
         objShader.setMat4("projection", glm::value_ptr(projection));
-        objShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
-        objShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-        objShader.setVec3("lightPos", lightPos.x, lightPos.y, lightPos.z);
+        // 物体
         objShader.setVec3("viewPos", cam.Position.x, cam.Position.y, cam.Position.z);
+        //objShader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f); // 环境光照
+        //objShader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);  // 漫反射
+        //objShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);  // 镜面反射
+        objShader.setVec3("material.ambient", 0.0f, 0.1f, 0.06f); // 环境光照
+        objShader.setVec3("material.diffuse", 0.0f, 0.50980392f, 0.50980392f);  // 漫反射
+        objShader.setVec3("material.specular", 0.50196078f, 0.50196078f, 0.50196078f);  // 镜面反射
+        objShader.setFloat("material.shininess", 32.0f);
         glBindVertexArray(objVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
@@ -248,6 +273,7 @@ int main()
         lightShader.setMat4("model", glm::value_ptr(lightModel));
         lightShader.setMat4("view", glm::value_ptr(cam.GetViewMatrix()));
         lightShader.setMat4("projection", glm::value_ptr(projection));
+        lightShader.setVec3("lightColor", lightColor.x, lightColor.y, lightColor.z);
         glBindVertexArray(lightVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 

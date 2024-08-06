@@ -7,6 +7,9 @@
 #include <sstream>
 #include <iostream>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 class Shader
 {
@@ -33,6 +36,8 @@ public:
     void setMat4(const std::string& name,const float* value) const;
 
     void setVec3(const std::string& name, float val1, float val2, float val3);
+
+    void setVec3(const std::string& name, glm::vec3& vec);
 
 private:
     // utility function for checking shader compilation/linking errors.
