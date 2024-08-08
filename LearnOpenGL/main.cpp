@@ -14,7 +14,7 @@
 #pragma comment(lib, "glfw3.lib")
 #pragma comment(lib, "opengl32.lib")
 
-//extern "C" __declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+
 float deltaTime = 0.0f; // 当前帧与上一帧的时间差
 float lastFrame = 0.0f; // 上一帧的时间
 
@@ -28,9 +28,6 @@ const unsigned int SCR_HEIGHT = 600;
 
 // 创建摄像机类
 Camera cam;
-
-// 0-1  两种纹理的混合比例
-//float mixVal = 0;
 
 bool firstMouse = true;
 
@@ -143,7 +140,7 @@ int main()
         -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
     };
 
-
+    // 物体位置
     glm::vec3 cubePositions[] = {
     glm::vec3(0.0f,  0.0f,  0.0f),
     glm::vec3(2.0f,  5.0f, -15.0f),
@@ -155,6 +152,14 @@ int main()
     glm::vec3(1.5f,  2.0f, -2.5f),
     glm::vec3(1.5f,  0.2f, -1.5f),
     glm::vec3(-1.3f,  1.0f, -1.5f)
+    };
+
+    // 点光源位置
+    glm::vec3 pointLightPositions[] = {
+        glm::vec3(0.7f,  0.2f,  2.0f),
+        glm::vec3(2.3f, -3.3f, -4.0f),
+        glm::vec3(-4.0f,  2.0f, -12.0f),
+        glm::vec3(0.0f,  0.0f, -3.0f)
     };
 
     // 生成顶点数组对象和顶点缓冲对象
@@ -229,63 +234,77 @@ int main()
         glm::mat4 projection;
         projection = glm::perspective(glm::radians(cam.Zoom), 
             static_cast<float>(SCR_WIDTH)/ static_cast<float>(SCR_HEIGHT), 0.1f, 100.0f);
-        
-        //glm::mat4 objModel = glm::mat4(1.0f);
-        //objModel = glm::translate(objModel, glm::vec3(0.0f, 0.0f, 0.0f));
 
-        glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
-        lightPos.x = 1.0f + sin(glfwGetTime()) * 2.0f;
-        lightPos.y = sin(glfwGetTime() / 2.0f) * 1.0f;
-        glm::mat4 lightModel = glm::mat4(1.0f);
-        lightModel = glm::translate(lightModel, lightPos);
-        lightModel = glm::scale(lightModel, glm::vec3(0.2f));
-
-
-
-        // 光源
+        // 光源颜色
         glm::vec3 lightColor;
-        //lightColor.x = sin(glfwGetTime() * 2.0f);
-        //lightColor.y = sin(glfwGetTime() * 0.7f);
-        //lightColor.z = sin(glfwGetTime() * 1.3f);
         lightColor.x = 1.0f;
         lightColor.y = 1.0f;
         lightColor.z = 1.0f;
+
+
         objShader.use();
-        //glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);
-        //glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f);
-        glm::vec3 diffuseColor = glm::vec3(0.5f);
-        glm::vec3 ambientColor = glm::vec3(0.2f);
-        glm::vec3 specularColor = glm::vec3(1.0f);
-        objShader.setVec3("light.ambient", ambientColor); //光源的 环境光照
-        objShader.setVec3("light.diffuse", diffuseColor);  //光源的 漫反射
-        objShader.setVec3("light.specular", specularColor);  //光源的 镜面反射
-        //objShader.setVec3("light.position", lightPos);
-        objShader.setVec3("light.position", cam.Position);
-        objShader.setVec3("light.direction", cam.Front);
-        objShader.setFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
-        objShader.setFloat("light.outerCutOff", glm::cos(glm::radians(17.5f)));
-        //objShader.setVec3("light.direction", -0.2f, -1.0f, -0.3f);
+        glm::vec3 diffuseColor = glm::vec3(0.6f);
+        glm::vec3 ambientColor = glm::vec3(0.05f);
+        glm::vec3 specularColor = glm::vec3(0.8f);
 
-
-        //objShader.setMat4("model", glm::value_ptr(objModel));
-        objShader.setMat4("view", glm::value_ptr(cam.GetViewMatrix()));
-        objShader.setMat4("projection", glm::value_ptr(projection));
         // 物体
-        objShader.setVec3("viewPos", cam.Position.x, cam.Position.y, cam.Position.z);
-        //objShader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f); // 环境光照
-        //objShader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);  // 漫反射
-        //objShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);  // 镜面反射
-        //objShader.setVec3("material.ambient", 0.0f, 0.1f, 0.06f); // 环境光照
-        //objShader.setVec3("material.diffuse", 0.0f, 0.50980392f, 0.50980392f);  // 漫反射
+        objShader.setVec3("viewPos", cam.Position);
         objShader.setInt("material.diffuse", 0);
-        //objShader.setVec3("material.specular", 0.50196078f, 0.50196078f, 0.50196078f);  // 镜面反射
         objShader.setInt("material.specular", 1);
         objShader.setFloat("material.shininess", 32.0f);
-        objShader.setFloat("light.constant", 1.0f);
-        objShader.setFloat("light.linear", 0.09f);
-        objShader.setFloat("light.quadratic", 0.032f);
+
+
+        // 平行光
+        objShader.setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
+        objShader.setVec3("dirLight.ambient", 0.05, 0.05, 0.05); //光源的 环境光照
+        objShader.setVec3("dirLight.diffuse", 0.4, 0.4, 0.4);  //光源的 漫反射
+        objShader.setVec3("dirLight.specular", 0.5, 0.5, 0.5);  //光源的 镜面反射
+
+        // 点光源
+        objShader.setVec3("pointLights[0].position", pointLightPositions[0]);
+        objShader.setFloat("pointLights[0].constant", 1.0f);
+        objShader.setFloat("pointLights[0].linear", 0.09f);
+        objShader.setFloat("pointLights[0].quadratic", 0.032f);
+        objShader.setVec3("pointLights[0].ambient", ambientColor); //光源的 环境光照
+        objShader.setVec3("pointLights[0].diffuse", diffuseColor);  //光源的 漫反射
+        objShader.setVec3("pointLights[0].specular", specularColor);  //光源的 镜面反射
+
+        objShader.setVec3("pointLights[1].position", pointLightPositions[1]);
+        objShader.setFloat("pointLights[1].constant", 1.0f);
+        objShader.setFloat("pointLights[1].linear", 0.09f);
+        objShader.setFloat("pointLights[1].quadratic", 0.032f);
+        objShader.setVec3("pointLights[1].ambient", ambientColor); //光源的 环境光照
+        objShader.setVec3("pointLights[1].diffuse", diffuseColor);  //光源的 漫反射
+        objShader.setVec3("pointLights[1].specular", specularColor);  //光源的 镜面反射
+
+        objShader.setVec3("pointLights[2].position", pointLightPositions[2]);
+        objShader.setFloat("pointLights[2].constant", 1.0f);
+        objShader.setFloat("pointLights[2].linear", 0.09f);
+        objShader.setFloat("pointLights[2].quadratic", 0.032f);
+        objShader.setVec3("pointLights[2].ambient", ambientColor); //光源的 环境光照
+        objShader.setVec3("pointLights[2].diffuse", diffuseColor);  //光源的 漫反射
+        objShader.setVec3("pointLights[2].specular", specularColor);  //光源的 镜面反射
+
+        objShader.setVec3("pointLights[3].position", pointLightPositions[3]);
+        objShader.setFloat("pointLights[3].constant", 1.0f);
+        objShader.setFloat("pointLights[3].linear", 0.09f);
+        objShader.setFloat("pointLights[3].quadratic", 0.032f);
+        objShader.setVec3("pointLights[3].ambient", ambientColor); //光源的 环境光照
+        objShader.setVec3("pointLights[3].diffuse", diffuseColor);  //光源的 漫反射
+        objShader.setVec3("pointLights[3].specular", specularColor);  //光源的 镜面反射
         
-        
+        // 聚光
+        objShader.setVec3("spotLight.position", cam.Position);
+        objShader.setVec3("spotLight.direction", cam.Front);
+        objShader.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
+        objShader.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
+        objShader.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
+        objShader.setFloat("spotLight.constant", 1.0f);
+        objShader.setFloat("spotLight.linear", 0.09f);
+        objShader.setFloat("spotLight.quadratic", 0.032f);
+        objShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+        objShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
+
         // bind diffuse map
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, diffuseMap);
@@ -294,7 +313,7 @@ int main()
 
         glBindVertexArray(objVAO);
 
-
+        // 绘制物体
         for (unsigned int i = 0; i < 10; i++)
         {
             glm::mat4 model;
@@ -302,24 +321,28 @@ int main()
             float angle = 20.0f * i;
             model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
             objShader.setMat4("model", glm::value_ptr(model));
+            objShader.setMat4("view", glm::value_ptr(cam.GetViewMatrix()));
+            objShader.setMat4("projection", glm::value_ptr(projection));
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
+
+        // 绘制光源
+        glBindVertexArray(lightVAO);
+        for (int i = 0; i < 4; i++) {
+
+            glm::mat4 lightModel = glm::mat4(1.0f);
+            lightModel = glm::translate(lightModel, pointLightPositions[i]);
+            lightModel = glm::scale(lightModel, glm::vec3(0.2f));
+            lightShader.use();
+            lightShader.setMat4("model", glm::value_ptr(lightModel));
+            lightShader.setMat4("view", glm::value_ptr(cam.GetViewMatrix()));
+            lightShader.setMat4("projection", glm::value_ptr(projection));
+            lightShader.setVec3("lightColor", lightColor.x, lightColor.y, lightColor.z);
 
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
 
 
-
-        //glDrawArrays(GL_TRIANGLES, 0, 36);
-
-
-        // 绘制光源
-        lightShader.use();
-        lightShader.setMat4("model", glm::value_ptr(lightModel));
-        lightShader.setMat4("view", glm::value_ptr(cam.GetViewMatrix()));
-        lightShader.setMat4("projection", glm::value_ptr(projection));
-        lightShader.setVec3("lightColor", lightColor.x, lightColor.y, lightColor.z);
-
-        glBindVertexArray(lightVAO);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
