@@ -144,6 +144,19 @@ int main()
     };
 
 
+    glm::vec3 cubePositions[] = {
+    glm::vec3(0.0f,  0.0f,  0.0f),
+    glm::vec3(2.0f,  5.0f, -15.0f),
+    glm::vec3(-1.5f, -2.2f, -2.5f),
+    glm::vec3(-3.8f, -2.0f, -12.3f),
+    glm::vec3(2.4f, -0.4f, -3.5f),
+    glm::vec3(-1.7f,  3.0f, -7.5f),
+    glm::vec3(1.3f, -2.0f, -2.5f),
+    glm::vec3(1.5f,  2.0f, -2.5f),
+    glm::vec3(1.5f,  0.2f, -1.5f),
+    glm::vec3(-1.3f,  1.0f, -1.5f)
+    };
+
     // 生成顶点数组对象和顶点缓冲对象
     unsigned int objVBO, objVAO;
     glGenVertexArrays(1, &objVAO);
@@ -217,8 +230,8 @@ int main()
         projection = glm::perspective(glm::radians(cam.Zoom), 
             static_cast<float>(SCR_WIDTH)/ static_cast<float>(SCR_HEIGHT), 0.1f, 100.0f);
         
-        glm::mat4 objModel = glm::mat4(1.0f);
-        objModel = glm::translate(objModel, glm::vec3(0.0f, 0.0f, 0.0f));
+        //glm::mat4 objModel = glm::mat4(1.0f);
+        //objModel = glm::translate(objModel, glm::vec3(0.0f, 0.0f, 0.0f));
 
         glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
         lightPos.x = 1.0f + sin(glfwGetTime()) * 2.0f;
@@ -240,15 +253,21 @@ int main()
         objShader.use();
         //glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);
         //glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f);
-        glm::vec3 diffuseColor = lightColor * glm::vec3(1.0f);
-        glm::vec3 ambientColor = diffuseColor * glm::vec3(1.0f);
+        glm::vec3 diffuseColor = glm::vec3(0.5f);
+        glm::vec3 ambientColor = glm::vec3(0.2f);
         glm::vec3 specularColor = glm::vec3(1.0f);
         objShader.setVec3("light.ambient", ambientColor); //光源的 环境光照
         objShader.setVec3("light.diffuse", diffuseColor);  //光源的 漫反射
         objShader.setVec3("light.specular", specularColor);  //光源的 镜面反射
-        objShader.setVec3("light.position", lightPos);
+        //objShader.setVec3("light.position", lightPos);
+        objShader.setVec3("light.position", cam.Position);
+        objShader.setVec3("light.direction", cam.Front);
+        objShader.setFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
+        objShader.setFloat("light.outerCutOff", glm::cos(glm::radians(17.5f)));
+        //objShader.setVec3("light.direction", -0.2f, -1.0f, -0.3f);
 
-        objShader.setMat4("model", glm::value_ptr(objModel));
+
+        //objShader.setMat4("model", glm::value_ptr(objModel));
         objShader.setMat4("view", glm::value_ptr(cam.GetViewMatrix()));
         objShader.setMat4("projection", glm::value_ptr(projection));
         // 物体
@@ -262,8 +281,11 @@ int main()
         //objShader.setVec3("material.specular", 0.50196078f, 0.50196078f, 0.50196078f);  // 镜面反射
         objShader.setInt("material.specular", 1);
         objShader.setFloat("material.shininess", 32.0f);
-
-
+        objShader.setFloat("light.constant", 1.0f);
+        objShader.setFloat("light.linear", 0.09f);
+        objShader.setFloat("light.quadratic", 0.032f);
+        
+        
         // bind diffuse map
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, diffuseMap);
@@ -271,7 +293,22 @@ int main()
         glBindTexture(GL_TEXTURE_2D, diffuseMap2);
 
         glBindVertexArray(objVAO);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+
+        for (unsigned int i = 0; i < 10; i++)
+        {
+            glm::mat4 model;
+            model = glm::translate(model, cubePositions[i]);
+            float angle = 20.0f * i;
+            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+            objShader.setMat4("model", glm::value_ptr(model));
+
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
+
+
+
+        //glDrawArrays(GL_TRIANGLES, 0, 36);
 
 
         // 绘制光源
@@ -280,6 +317,7 @@ int main()
         lightShader.setMat4("view", glm::value_ptr(cam.GetViewMatrix()));
         lightShader.setMat4("projection", glm::value_ptr(projection));
         lightShader.setVec3("lightColor", lightColor.x, lightColor.y, lightColor.z);
+
         glBindVertexArray(lightVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
