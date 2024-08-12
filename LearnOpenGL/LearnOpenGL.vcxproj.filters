@@ -70,6 +70,15 @@
     <None Include="model_loading.vs">
       <Filter>shaderCode</Filter>
     </None>
+    <None Include="stencil_single_color.fs">
+      <Filter>shaderCode</Filter>
+    </None>
+    <None Include="stencil_testing.fs">
+      <Filter>shaderCode</Filter>
+    </None>
+    <None Include="stencil_testing.vs">
+      <Filter>shaderCode</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="wall.jpg">
