@@ -158,6 +158,8 @@
     <ClInclude Include="stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="blending.fs" />
+    <None Include="blending.vs" />
     <None Include="lightShader.fs" />
     <None Include="model_loading.fs" />
     <None Include="model_loading.vs" />
@@ -169,9 +171,11 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="awesomeface.png" />
+    <Image Include="blending_transparent_window.png" />
     <Image Include="container.jpg" />
     <Image Include="container2.png" />
     <Image Include="container2_specular.png" />
+    <Image Include="grass.png" />
     <Image Include="wall.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

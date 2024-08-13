@@ -79,6 +79,12 @@
     <None Include="stencil_testing.vs">
       <Filter>shaderCode</Filter>
     </None>
+    <None Include="blending.fs">
+      <Filter>shaderCode</Filter>
+    </None>
+    <None Include="blending.vs">
+      <Filter>shaderCode</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="wall.jpg">
@@ -94,6 +100,12 @@
       <Filter>资源文件</Filter>
     </Image>
     <Image Include="container2_specular.png">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="blending_transparent_window.png">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="grass.png">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>
