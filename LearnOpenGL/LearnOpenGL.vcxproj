@@ -167,6 +167,8 @@
     <None Include="shader.vs" />
     <None Include="simple.fs" />
     <None Include="simple.vs" />
+    <None Include="sky.fs" />
+    <None Include="sky.vs" />
     <None Include="stencil_single_color.fs" />
     <None Include="stencil_testing.fs" />
     <None Include="stencil_testing.vs" />
@@ -178,6 +180,12 @@
     <Image Include="container2.png" />
     <Image Include="container2_specular.png" />
     <Image Include="grass.png" />
+    <Image Include="skybox\back.jpg" />
+    <Image Include="skybox\bottom.jpg" />
+    <Image Include="skybox\front.jpg" />
+    <Image Include="skybox\left.jpg" />
+    <Image Include="skybox\right.jpg" />
+    <Image Include="skybox\top.jpg" />
     <Image Include="wall.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
