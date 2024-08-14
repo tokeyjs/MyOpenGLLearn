@@ -69,61 +69,63 @@ int main()
         return -1;
     }
 
-    // configure global opengl state
-    // -----------------------------
     glEnable(GL_DEPTH_TEST);
 
 
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //glEnable(GL_BLEND);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+
+    //glEnable(GL_CULL_FACE);
 
     Shader shader("blending.vs", "blending.fs");
+    Shader screenShader("simple.vs", "simple.fs");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
     float cubeVertices[] = {
-        // positions          // texture Coords
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-         0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+        // Back face
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, // Bottom-left
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right
+         0.5f, -0.5f, -0.5f,  1.0f, 0.0f, // bottom-right         
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, // bottom-left
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, // top-left
+        // Front face
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-left
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f, // bottom-right
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f, // top-right
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f, // top-right
+        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f, // top-left
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-left
+        // Left face
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-right
+        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-left
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-left
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-left
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-right
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-right
+        // Right face
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-left
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-right
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right         
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-right
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-left
+         0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-left     
+        // Bottom face
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // top-right
+         0.5f, -0.5f, -0.5f,  1.0f, 1.0f, // top-left
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f, // bottom-left
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f, // bottom-left
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-right
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // top-right
+        // Top face
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, // top-left
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // bottom-right
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right     
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // bottom-right
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, // top-left
+        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f  // bottom-left        
     };
     float planeVertices[] = {
         // positions          // texture Coords 
@@ -135,16 +137,30 @@ int main()
         -5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
          5.0f, -0.5f, -5.0f,  2.0f, 2.0f
     };
-    float transparentVertices[] = {
-        // positions         // texture Coords (swapped y coordinates because texture is flipped upside down)
-        0.0f,  0.5f,  0.0f,  0.0f,  0.0f,
-        0.0f, -0.5f,  0.0f,  0.0f,  1.0f,
-        1.0f, -0.5f,  0.0f,  1.0f,  1.0f,
 
-        0.0f,  0.5f,  0.0f,  0.0f,  0.0f,
-        1.0f, -0.5f,  0.0f,  1.0f,  1.0f,
-        1.0f,  0.5f,  0.0f,  1.0f,  0.0f
+    // 屏幕上的正方形
+    float sceenVertices[]{
+        -1.0, -1.0,     0.0, 0.0,
+        1.0, 1.0,       1.0, 1.0,
+        -1.0, 1.0,      0.0, 1.0,
+
+        -1.0, -1.0,     0.0, 0.0,
+        1.0, -1.0,      1.0, 0.0,
+        1.0, 1.0,       1.0, 1.0
     };
+    // 屏幕
+    unsigned int quadVAO, quadVBO;
+    glGenVertexArrays(1, &quadVAO);
+    glGenBuffers(1, &quadVBO);
+    glBindVertexArray(quadVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(sceenVertices), &sceenVertices, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+
+
     // cube VAO
     unsigned int cubeVAO, cubeVBO;
     glGenVertexArrays(1, &cubeVAO);
@@ -167,40 +183,48 @@ int main()
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-    // transparent VAO
-    unsigned int transparentVAO, transparentVBO;
-    glGenVertexArrays(1, &transparentVAO);
-    glGenBuffers(1, &transparentVBO);
-    glBindVertexArray(transparentVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, transparentVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(transparentVertices), transparentVertices, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-    glBindVertexArray(0);
 
     // load textures
     // -------------
     unsigned int cubeTexture = loadTexture("./container.jpg");
     unsigned int floorTexture = loadTexture("./wall.jpg");
-    unsigned int transparentTexture = loadTexture("./blending_transparent_window.png");
 
-    // transparent vegetation locations
-    // --------------------------------
-    std::vector<glm::vec3> vegetation
-    {
-        glm::vec3(-1.5f, 0.0f, -0.48f),
-        glm::vec3(1.5f, 0.0f, 0.51f),
-        glm::vec3(0.0f, 0.0f, 0.7f),
-        glm::vec3(-0.3f, 0.0f, -2.3f),
-        glm::vec3(0.5f, 0.0f, -0.6f)
-    };
 
-    // shader configuration
-    // --------------------
     shader.use();
     shader.setInt("texture1", 0);
+
+
+    // 创建帧缓存
+    unsigned int framebuffer;
+    glGenFramebuffers(1, &framebuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    // 生成 颜色纹理
+    unsigned int texColorBuffer;
+    glGenTextures(1, &texColorBuffer);
+    glBindTexture(GL_TEXTURE_2D, texColorBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 800, 600, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    // 将它附加到当前绑定的帧缓冲对象
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texColorBuffer, 0);
+
+    // 创建 深度 模板的 渲染缓冲对象 
+    unsigned int rbo;
+    glGenRenderbuffers(1, &rbo);
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 800, 600);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    // 将它附加到当前绑定的帧缓冲对象
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+
+
+    // 检查帧缓冲是否完整
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
 
     // render loop
     // -----------
@@ -218,8 +242,12 @@ int main()
 
         // render
         // ------
+// -----------------------------绑定帧缓存
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glEnable(GL_DEPTH_TEST);  // 启用深度测试
+
 
         // draw objects
         shader.use();
@@ -247,30 +275,22 @@ int main()
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
 
+//------------------解绑帧缓冲，绑定默认
+        glBindFramebuffer(GL_FRAMEBUFFER, 0); // 返回默认
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
 
-        std::map<float, glm::vec3> sorted;
-        for (unsigned int i = 0; i < vegetation.size(); i++)
-        {
-            float distance = glm::length(camera.Position - vegetation[i]);
-            sorted[distance] = vegetation[i];
-        }
-
-
-
-        // vegetation
-        glBindVertexArray(transparentVAO);
-        glBindTexture(GL_TEXTURE_2D, transparentTexture);
-        for (std::map<float, glm::vec3>::reverse_iterator it = sorted.rbegin(); it != sorted.rend(); ++it)
-        {
-            model = glm::mat4();
-            model = glm::translate(model, it->second);
-            shader.setMat4("model", model);
-            glDrawArrays(GL_TRIANGLES, 0, 6);
-        }
+        // 将前面的帧缓冲当作纹理贴到屏幕的正方形中
+        screenShader.use();
+        shader.setInt("screenTexture", 0);
+        glBindVertexArray(quadVAO);
+        glDisable(GL_DEPTH_TEST);     // 禁止深度测试
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texColorBuffer);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
 
 
-        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-        // -------------------------------------------------------------------------------
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
@@ -279,8 +299,10 @@ int main()
     // ------------------------------------------------------------------------
     glDeleteVertexArrays(1, &cubeVAO);
     glDeleteVertexArrays(1, &planeVAO);
+    glDeleteVertexArrays(1, &quadVAO);
     glDeleteBuffers(1, &cubeVBO);
     glDeleteBuffers(1, &planeVBO);
+    glDeleteBuffers(1, &quadVBO);
 
     glfwTerminate();
     return 0;

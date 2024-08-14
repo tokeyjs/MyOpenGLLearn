@@ -85,6 +85,12 @@
     <None Include="blending.vs">
       <Filter>shaderCode</Filter>
     </None>
+    <None Include="simple.fs">
+      <Filter>shaderCode</Filter>
+    </None>
+    <None Include="simple.vs">
+      <Filter>shaderCode</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="wall.jpg">

@@ -165,6 +165,8 @@
     <None Include="model_loading.vs" />
     <None Include="shader.fs" />
     <None Include="shader.vs" />
+    <None Include="simple.fs" />
+    <None Include="simple.vs" />
     <None Include="stencil_single_color.fs" />
     <None Include="stencil_testing.fs" />
     <None Include="stencil_testing.vs" />
