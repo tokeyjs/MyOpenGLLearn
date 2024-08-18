@@ -97,6 +97,12 @@
     <None Include="sky.vs">
       <Filter>shaderCode</Filter>
     </None>
+    <None Include="cube.fs">
+      <Filter>shaderCode</Filter>
+    </None>
+    <None Include="cube.vs">
+      <Filter>shaderCode</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="wall.jpg">

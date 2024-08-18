@@ -160,6 +160,8 @@
   <ItemGroup>
     <None Include="blending.fs" />
     <None Include="blending.vs" />
+    <None Include="cube.fs" />
+    <None Include="cube.vs" />
     <None Include="lightShader.fs" />
     <None Include="model_loading.fs" />
     <None Include="model_loading.vs" />
