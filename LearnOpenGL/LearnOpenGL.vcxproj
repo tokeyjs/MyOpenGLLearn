@@ -158,6 +158,11 @@
     <ClInclude Include="stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="8blue.fs" />
+    <None Include="8green.fs" />
+    <None Include="8red.fs" />
+    <None Include="8yellow.fs" />
+    <None Include="advanced_glsl.vs" />
     <None Include="blending.fs" />
     <None Include="blending.vs" />
     <None Include="cube.fs" />

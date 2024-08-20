@@ -103,6 +103,21 @@
     <None Include="cube.vs">
       <Filter>shaderCode</Filter>
     </None>
+    <None Include="8blue.fs">
+      <Filter>shaderCode</Filter>
+    </None>
+    <None Include="8green.fs">
+      <Filter>shaderCode</Filter>
+    </None>
+    <None Include="8red.fs">
+      <Filter>shaderCode</Filter>
+    </None>
+    <None Include="8yellow.fs">
+      <Filter>shaderCode</Filter>
+    </None>
+    <None Include="advanced_glsl.vs">
+      <Filter>shaderCode</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="wall.jpg">
