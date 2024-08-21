@@ -4,16 +4,19 @@
 
 // constructor generates the shader on the fly
 // ------------------------------------------------------------------------
-Shader::Shader(const char* vertexPath, const char* fragmentPath)
+Shader::Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath)
 {
     // 1. retrieve the vertex/fragment source code from filePath
     std::string vertexCode;
     std::string fragmentCode;
+    std::string geometryCode;
     std::ifstream vShaderFile;
     std::ifstream fShaderFile;
+    std::ifstream gShaderFile;
     // ensure ifstream objects can throw exceptions:
     vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+    gShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     try
     {
         // open files
@@ -29,6 +32,15 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
         // convert stream into string
         vertexCode = vShaderStream.str();
         fragmentCode = fShaderStream.str();
+        // if geometry shader path is present, also load a geometry shader
+        if (geometryPath != nullptr)
+        {
+            gShaderFile.open(geometryPath);
+            std::stringstream gShaderStream;
+            gShaderStream << gShaderFile.rdbuf();
+            gShaderFile.close();
+            geometryCode = gShaderStream.str();
+        }
     }
     catch (std::ifstream::failure& e)
     {
@@ -38,29 +50,40 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
     const char* fShaderCode = fragmentCode.c_str();
     // 2. compile shaders
     unsigned int vertex, fragment;
-    // vertex shader 创建顶点着色器对象并编译
+    // vertex shader
     vertex = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertex, 1, &vShaderCode, NULL);
     glCompileShader(vertex);
     checkCompileErrors(vertex, "VERTEX");
-
-    // fragment Shader 片段着色器所做的是计算像素最后的颜色输出（红色、绿色、蓝色和alpha(透明度)分量，通常缩写为RGBA）。
-    // 创建对片段象着色器对象并编译
+    // fragment Shader
     fragment = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragment, 1, &fShaderCode, NULL);
     glCompileShader(fragment);
     checkCompileErrors(fragment, "FRAGMENT");
-
+    // if geometry shader is given, compile geometry shader
+    unsigned int geometry;
+    if (geometryPath != nullptr)
+    {
+        const char* gShaderCode = geometryCode.c_str();
+        geometry = glCreateShader(GL_GEOMETRY_SHADER);
+        glShaderSource(geometry, 1, &gShaderCode, NULL);
+        glCompileShader(geometry);
+        checkCompileErrors(geometry, "GEOMETRY");
+    }
     // shader Program
-    // 创建着色器程序并将着色器附加到上面然后进行链接
     ID = glCreateProgram();
     glAttachShader(ID, vertex);
     glAttachShader(ID, fragment);
+    if (geometryPath != nullptr)
+        glAttachShader(ID, geometry);
     glLinkProgram(ID);
     checkCompileErrors(ID, "PROGRAM");
     // delete the shaders as they're linked into our program now and no longer necessary
     glDeleteShader(vertex);
     glDeleteShader(fragment);
+    if (geometryPath != nullptr)
+        glDeleteShader(geometry);
+
 }
 // activate the shader
 // ------------------------------------------------------------------------

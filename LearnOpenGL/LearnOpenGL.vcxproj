@@ -167,6 +167,9 @@
     <None Include="blending.vs" />
     <None Include="cube.fs" />
     <None Include="cube.vs" />
+    <None Include="geometry_shader.fs" />
+    <None Include="geometry_shader.gs" />
+    <None Include="geometry_shader.vs" />
     <None Include="lightShader.fs" />
     <None Include="model_loading.fs" />
     <None Include="model_loading.vs" />

@@ -118,6 +118,15 @@
     <None Include="advanced_glsl.vs">
       <Filter>shaderCode</Filter>
     </None>
+    <None Include="geometry_shader.fs">
+      <Filter>shaderCode</Filter>
+    </None>
+    <None Include="geometry_shader.gs">
+      <Filter>shaderCode</Filter>
+    </None>
+    <None Include="geometry_shader.vs">
+      <Filter>shaderCode</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="wall.jpg">
