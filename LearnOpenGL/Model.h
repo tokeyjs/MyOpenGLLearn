@@ -16,7 +16,7 @@ public:
     /*  函数   */
     Model(std::string&& path, bool gamma=false);
     void Draw(Shader& shader);
-private:
+public:
     /*  模型数据  */
     std::vector<Mesh> m_meshes;
     std::string m_directory;

@@ -160,6 +160,10 @@
     <ClInclude Include="stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="10.3.asteroids.fs" />
+    <None Include="10.3.asteroids.vs" />
+    <None Include="10.3.planet.fs" />
+    <None Include="10.3.planet.vs" />
     <None Include="8blue.fs" />
     <None Include="8green.fs" />
     <None Include="8red.fs" />

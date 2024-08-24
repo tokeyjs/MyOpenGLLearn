@@ -133,6 +133,18 @@
     <None Include="instancing.vs">
       <Filter>shaderCode</Filter>
     </None>
+    <None Include="10.3.asteroids.fs">
+      <Filter>shaderCode</Filter>
+    </None>
+    <None Include="10.3.asteroids.vs">
+      <Filter>shaderCode</Filter>
+    </None>
+    <None Include="10.3.planet.fs">
+      <Filter>shaderCode</Filter>
+    </None>
+    <None Include="10.3.planet.vs">
+      <Filter>shaderCode</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="wall.jpg">
