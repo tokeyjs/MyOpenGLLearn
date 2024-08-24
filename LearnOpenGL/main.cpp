@@ -50,43 +50,97 @@ int main()
 
     glEnable(GL_DEPTH_TEST);
 
-    Shader shader("./geometry_shader.vs", "./geometry_shader.fs", "./geometry_shader.gs");
+    // build and compile shaders
+    // -------------------------
+    Shader shader("instancing.vs", "instancing.fs");
 
-    float points[] = {
-        -0.5f,  0.5f,        1.0f, 0.0f, 0.0f, // top-left
-         0.5f,  0.5f,        0.0f, 1.0f, 0.0f, // top-right
-         0.5f, -0.5f,        0.0f, 0.0f, 1.0f, // bottom-right
-        -0.5f, -0.5f,        1.0f, 1.0f, 0.0f  // bottom-left
+    // generate a list of 100 quad locations/translation-vectors
+    // ---------------------------------------------------------
+    glm::vec2 translations[100];
+    int index = 0;
+    float offset = 0.1f;
+    for (int y = -10; y < 10; y += 2)
+    {
+        for (int x = -10; x < 10; x += 2)
+        {
+            glm::vec2 translation;
+            translation.x = (float)x / 10.0f + offset;
+            translation.y = (float)y / 10.0f + offset;
+            translations[index++] = translation;
+        }
+    }
+
+    // store instance data in an array buffer
+    // --------------------------------------
+    unsigned int instanceVBO;
+    glGenBuffers(1, &instanceVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * 100, &translations[0], GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    // set up vertex data (and buffer(s)) and configure vertex attributes
+    // ------------------------------------------------------------------
+    float quadVertices[] = {
+        // positions        // colors
+        -0.05f,  0.05f,     1.0f, 0.0f, 0.0f,
+         0.05f, -0.05f,     0.0f, 1.0f, 0.0f,
+        -0.05f, -0.05f,     0.0f, 0.0f, 1.0f,
+
+        -0.05f,  0.05f,     1.0f, 0.0f, 0.0f,
+         0.05f, -0.05f,     0.0f, 1.0f, 0.0f,
+         0.05f,  0.05f,     0.0f, 1.0f, 1.0f
     };
-    unsigned int VBO, VAO;
-    glGenBuffers(1, &VBO);
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(points), &points, GL_STATIC_DRAW);
+    unsigned int quadVAO, quadVBO;
+    glGenVertexArrays(1, &quadVAO);
+    glGenBuffers(1, &quadVBO);
+    glBindVertexArray(quadVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), 0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(2 * sizeof(float)));
-    glBindVertexArray(0);
+    // also set instance data
+    glEnableVertexAttribArray(2);
+    glBindBuffer(GL_ARRAY_BUFFER, instanceVBO); // this attribute comes from a different vertex buffer
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glVertexAttribDivisor(2, 1); // tell OpenGL this is an instanced vertex attribute.
+    /*
+    这个函数告诉了OpenGL该什么时候更新顶点属性的内容至新一组数据。
+    它的第一个参数是需要的顶点属性，第二个参数是属性除数(Attribute Divisor)。
+    默认情况下，属性除数是0，告诉OpenGL我们需要在顶点着色器的每次迭代时更新顶点属性。
+    将它设置为1时，我们告诉OpenGL我们希望在渲染一个新实例的时候更新顶点属性。
+    而设置为2时，我们希望每2个实例更新一次属性，以此类推。
+    我们将属性除数设置为1，是在告诉OpenGL，处于位置值2的顶点属性是一个实例化数组。
+    */
 
+
+    // render loop
+    // -----------
     while (!glfwWindowShouldClose(window))
     {
+        // render
+        // ------
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        // draw 100 instanced quads
         shader.use();
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_POINTS, 0, 4);
+        glBindVertexArray(quadVAO);
+        glDrawArraysInstanced(GL_TRIANGLES, 0, 6, 100); // 100 triangles of 6 vertices each
+        glBindVertexArray(0);
 
+        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
+        // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-
-    glfwTerminate();
+    // optional: de-allocate all resources once they've outlived their purpose:
+    // ------------------------------------------------------------------------
+    glDeleteVertexArrays(1, &quadVAO);
+    glDeleteBuffers(1, &quadVBO);
     return 0;
 }
 

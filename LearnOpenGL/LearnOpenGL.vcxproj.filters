@@ -127,6 +127,12 @@
     <None Include="geometry_shader.vs">
       <Filter>shaderCode</Filter>
     </None>
+    <None Include="instancing.fs">
+      <Filter>shaderCode</Filter>
+    </None>
+    <None Include="instancing.vs">
+      <Filter>shaderCode</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="wall.jpg">
